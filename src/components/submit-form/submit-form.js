@@ -19,18 +19,34 @@ class SubmitForm extends React.Component{
         this.addItem = this.addItem.bind(this);
     }
 
-    addItem(e) {
+    async addItem(e) {
         if(this._inputElement.value !== "") {
             const newItem = {
                 text: this._inputElement.value,
                 id: this.state.taskCount,
                 key: Date.now()
             }
+            this.addToDB(newItem)
+            // this.props.refreshTaskList();
             this.props.addTask(newItem);
             this.state.taskCount++;
             this._inputElement.value = "";
         }
         e.preventDefault();
+    }
+
+    addToDB = async (data) => {
+        const response = await fetch('http://localhost:5001/task/',{
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(
+            response => {
+                window.location.reload()
+            }
+        );
     }
 }
 
